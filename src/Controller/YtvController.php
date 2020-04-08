@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Dto\Request\AddDto;
+use App\Dto\Request\IdDto;
 use App\Exception\ValidationException;
 use App\Helper\DtoHelper;
 use App\Model\ApiModel;
@@ -16,7 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class YtvController extends AbstractController
 {
     /**
-     * @Route("/add", name="add")
+     * @Route("/add", name="add", methods={"POST"})
+     * @param Request $request
+     * @return Response
      * @throws ValidationException
      */
     public function addAction(Request $request)
@@ -32,6 +35,62 @@ class YtvController extends AbstractController
 
         // Processing
         $data = ApiModel::add($addDto);
+
+        // Response
+        return new Response(
+            DtoHelper::createResponseDto(Response::HTTP_OK, $data, []),
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    /**
+     * @Route("/update", name="update", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
+     */
+    public function updateAction(Request $request)
+    {
+        // Deserialize the payload
+        $idDto = Serializer::getInstance()->deserialize($request->getContent(), IdDto::class, 'json');
+
+        // Validate the resulting dto
+        $violations = Validator::getInstance()->validate($idDto);
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+
+        // Processing
+        $data = ApiModel::update($idDto);
+
+        // Response
+        return new Response(
+            DtoHelper::createResponseDto(Response::HTTP_OK, $data, []),
+            Response::HTTP_OK,
+            ['Content-Type' => 'application/json']
+        );
+    }
+
+    /**
+     * @Route("/delete", name="delete", methods={"POST"})
+     * @param Request $request
+     * @return Response
+     * @throws ValidationException
+     */
+    public function deleteAction(Request $request)
+    {
+        // Deserialize the payload
+        $idDto = Serializer::getInstance()->deserialize($request->getContent(), IdDto::class, 'json');
+
+        // Validate the resulting dto
+        $violations = Validator::getInstance()->validate($idDto);
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+
+        // Processing
+        $data = ApiModel::delete($idDto);
 
         // Response
         return new Response(
