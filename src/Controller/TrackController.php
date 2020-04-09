@@ -6,7 +6,7 @@ use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
 use App\Exception\ValidationException;
 use App\Helper\DtoHelper;
-use App\Model\ApiModel;
+use App\Model\TrackModel;
 use App\Serializer\Serializer;
 use App\Validator\Validator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,7 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class YtvController extends AbstractController
+class TrackController extends AbstractController
 {
     /**
      * @Route("/add", name="add", methods={"POST"})
@@ -34,12 +34,12 @@ class YtvController extends AbstractController
         }
 
         // Processing
-        $data = ApiModel::add($addDto);
+        $data = TrackModel::create($addDto);
 
         // Response
         return new Response(
             DtoHelper::createResponseDto(Response::HTTP_OK, $data, []),
-            Response::HTTP_OK,
+            Response::HTTP_CREATED,
             ['Content-Type' => 'application/json']
         );
     }
@@ -62,7 +62,7 @@ class YtvController extends AbstractController
         }
 
         // Processing
-        $data = ApiModel::update($idDto);
+        $data = TrackModel::update($idDto);
 
         // Response
         return new Response(
@@ -90,7 +90,7 @@ class YtvController extends AbstractController
         }
 
         // Processing
-        $data = ApiModel::delete($idDto);
+        $data = TrackModel::delete($idDto);
 
         // Response
         return new Response(

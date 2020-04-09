@@ -10,15 +10,15 @@ use App\Dto\Request\IdDto;
  * Class DefaultModel
  * @package App\Model
  */
-class ApiModel
+class TrackModel
 {
     /**
      * @param AddDto $addDto
      * @return string
      */
-    public static function add(AddDto $addDto)
+    public static function create(AddDto $addDto)
     {
-        // create/find artist
+        // create/find artist in database
         // TODO
 
         // save ytv into database
