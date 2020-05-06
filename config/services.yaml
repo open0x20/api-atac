@@ -4,6 +4,14 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
+    data_dir: '%kernel.project_dir%/var/tmp'
+    store_dir: '%kernel.project_dir%/var/songs'
+
+    direct_link_extractor_url: ''
+
+    # http basic credentials
+    auth_basic_user: ''
+    auth_basic_pass: ''
 
 services:
     # default configuration for services in *this* file

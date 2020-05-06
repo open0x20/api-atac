@@ -3,66 +3,124 @@
 namespace App\Model;
 
 
+use App\Database\Database;
 use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
+use App\Dto\Request\UpdateDto;
+use App\Entity\Artist;
+use App\Entity\Track;
+use App\Entity\TrackArtist;
+use App\Exception\TrackException;
+use App\File\FileManager;
+use App\Helper\ArtistHelper;
 
 /**
- * Class DefaultModel
+ * Class TrackModel
  * @package App\Model
  */
 class TrackModel
 {
     /**
      * @param AddDto $addDto
-     * @return string
      */
     public static function create(AddDto $addDto)
     {
-        // create/find artist in database
-        // TODO
+        $trackRepo = Database::getInstance()->getRepository(Track::class);
+        $trackArtistRepo = Database::getInstance()->getRepository(TrackArtist::class);
 
-        // save ytv into database
-        // TODO
+        // check for duplicate track entries
+        if (count($trackRepo->findBy(['ytv' => $addDto->urlYtv])) > 0) {
+            throw new TrackException('A track with that urlYtv already exists.', 400);
+        }
 
-        // return database id
-        // TODO
+        // save track into database
+        $track = new Track();
+        $track->setYtv($addDto->urlYtv);
+        $track->setTitle($addDto->title);
+        $track->setCoverUrl($addDto->urlCover);
+        $track->setAlbum($addDto->album);
+        $track->setModified(true);
+        $trackRepo->persistTrack($track);
+
+        $trackArtists = ArtistHelper::createTrackArtistsFromStringArrays($track, $addDto->artists, $addDto->featuring);
+
+        $trackArtistRepo->persistTrackArtists($trackArtists);
+
+        // return database track id
+        return [
+            'id' => $track->getId()
+        ];
     }
 
     /**
-     * @param IdDto $idDto
-     * @return string
+     * @param UpdateDto $updateDto
      */
-    public static function update(IdDto $idDto)
+    public static function update(UpdateDto $updateDto)
     {
-        // find ytv in database
-        // TODO
+        $trackRepo = Database::getInstance()->getRepository(Track::class);
+        $trackArtistRepo = Database::getInstance()->getRepository(TrackArtist::class);
 
-        // remove ytv from local storage
-        // TODO
+        // find track in database
+        $track = $trackRepo->find($updateDto->trackId);
+        if ($track === null) {
+            throw new TrackException('No track found for given id.', 400);
+        }
 
-        // update ytv in database (set modified = 1)
-        // TODO
+        // remove from storage (needed in case the ytv url changes)
+        FileManager::removeFromStorage($track);
 
-        // return updated database id
-        // TODO
+        // update the database entity
+        $track->setYtv($updateDto->urlYtv);
+        $track->setTitle($updateDto->title);
+        $track->setCoverUrl($updateDto->urlCover);
+        $track->setAlbum($updateDto->album);
+        $track->setModified(true);
+
+        // remove old trackArtists
+        $trackArtistRepo->removeTrackArtists($track->getArtists());
+
+        // add new trackArtists
+        $trackArtistRepo->persistTrackArtists(
+            ArtistHelper::createTrackArtistsFromStringArrays(
+                $track,
+                $updateDto->artists,
+                $updateDto->featuring
+            )
+        );
+
+        $trackRepo->persistTrack($track);
+
+        return [
+            'id' => $track->getId()
+        ];
     }
 
     /**
      * @param IdDto $idDto
-     * @return string
      */
     public static function delete(IdDto $idDto)
     {
-        // find ytv in database
-        // TODO
+        $artistRepo = Database::getInstance()->getRepository(Artist::class);
+        $trackRepo = Database::getInstance()->getRepository(Track::class);
+        $trackArtistRepo = Database::getInstance()->getRepository(TrackArtist::class);
+
+        // find track in database
+        $track = $trackRepo->find($idDto->trackId);
+        if ($track === null) {
+            throw new TrackException('No track found for given id.', 400);
+        }
+        $trackId = $track->getId();
 
         // remove ytv from local storage
-        // TODO
+        FileManager::removeFromStorage($track);
 
         // remove ytv from database
-        // TODO
+        $trackArtistRepo->removeTrackArtists($track->getArtists());
+        $trackRepo->removeTrack($track);
 
         // return removed database id
-        // TODO
+        return [
+            'id' => $trackId
+        ];
     }
 }

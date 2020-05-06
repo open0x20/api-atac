@@ -5,11 +5,18 @@ namespace App\Dto\Request;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class AddDto
+ * Class UpdateDto
  * @package App\Dto\Request
  */
-class AddDto
+class UpdateDto
 {
+    /**
+     * @Assert\NotNull()
+     *
+     * @var int
+     */
+    public $trackId;
+
     /**
      * @Assert\NotBlank()
      * @Assert\NotNull()

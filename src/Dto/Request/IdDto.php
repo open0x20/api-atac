@@ -15,5 +15,5 @@ class IdDto
      *
      * @var int
      */
-    public $ytvId;
+    public $trackId;
 }

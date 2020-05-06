@@ -3,8 +3,11 @@
 namespace App\EventSubscriber;
 
 
+use App\Database\Database;
 use App\Helper\ConfigHelper;
+use App\Helper\LoggingHelper;
 use App\Validator\Validator;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -18,6 +21,11 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class RequestSubscriber implements EventSubscriberInterface
 {
+    /**
+     * @var EntityManagerInterface
+     */
+    private $entityManager;
+
     /**
      * @var ParameterBagInterface
      */
@@ -35,11 +43,14 @@ class RequestSubscriber implements EventSubscriberInterface
 
     /**
      * RequestSubscriber constructor.
+     * @param EntityManagerInterface $entityManager
      * @param ParameterBagInterface $parameterBag
      * @param LoggerInterface $logger
+     * @param ValidatorInterface $validator
      */
-    public function __construct(ParameterBagInterface $parameterBag, LoggerInterface $logger, ValidatorInterface $validator)
+    public function __construct(EntityManagerInterface $entityManager, ParameterBagInterface $parameterBag, LoggerInterface $logger, ValidatorInterface $validator)
     {
+        $this->entityManager = $entityManager;
         $this->parameterBag = $parameterBag;
         $this->logger = $logger;
         $this->validator = $validator;
@@ -81,5 +92,7 @@ class RequestSubscriber implements EventSubscriberInterface
     {
         ConfigHelper::initialize($this->parameterBag);
         Validator::initialize($this->validator);
+        LoggingHelper::initialize($this->logger);
+        Database::initialize($this->entityManager);
     }
 }
