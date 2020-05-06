@@ -3,6 +3,7 @@
 namespace App\Model;
 
 
+use App\Console\CommandWrapper;
 use App\Database\Database;
 use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
@@ -45,6 +46,9 @@ class TrackModel
         $trackArtists = ArtistHelper::createTrackArtistsFromStringArrays($track, $addDto->artists, $addDto->featuring);
 
         $trackArtistRepo->persistTrackArtists($trackArtists);
+
+        // trigger async worker
+        CommandWrapper::triggerAsyncWorker();
 
         // return database track id
         return [
@@ -89,6 +93,9 @@ class TrackModel
         );
 
         $trackRepo->persistTrack($track);
+
+        // trigger async worker
+        CommandWrapper::triggerAsyncWorker();
 
         return [
             'id' => $track->getId()

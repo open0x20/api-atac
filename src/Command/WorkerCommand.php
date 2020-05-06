@@ -12,6 +12,7 @@ use App\Validator\Validator;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
@@ -20,6 +21,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class WorkerCommand extends Command
 {
+    use LockableTrait;
+
     protected static $defaultName = 'app:worker';
 
     public function __construct(ParameterBagInterface $parameterBag, ValidatorInterface $validator, LoggerInterface $logger, EntityManagerInterface $entityManager, string $name = null)
@@ -40,15 +43,10 @@ class WorkerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new SymfonyStyle($input, $output);
-
-        $trackRepository = Database::getInstance()->getRepository(Track::class);
-
-        $tracks = $trackRepository->findBy([
-            'modified' => true
-        ]);
-
-        $io->write('Video(s) queued for processing: ' . count($tracks), true);
+        if (!$this->lock()) {
+            echo 'Already running. Terminating...' . PHP_EOL;
+            return 0;
+        }
 
         // Create data/store directories if they don't exist yet
         if (!file_exists(ConfigHelper::get('data_dir'))) {
@@ -58,9 +56,14 @@ class WorkerCommand extends Command
             CommandWrapper::mkdir(ConfigHelper::get('store_dir'));
         }
 
-        /**
-         * @var $tracks Track[]
-         */
+        $trackRepository = Database::getInstance()->getRepository(Track::class);
+
+        $tracks = $trackRepository->findBy([
+            'modified' => true
+        ]);
+
+        echo 'Video(s) queued for processing: ' . count($tracks) . PHP_EOL;
+
         foreach ($tracks as $track) {
             $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
 
@@ -83,6 +86,8 @@ class WorkerCommand extends Command
             $track->setModified(false);
             $trackRepository->persistTrack($track);
         }
+
+        $this->release();
 
         return 0;
     }

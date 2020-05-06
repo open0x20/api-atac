@@ -4,6 +4,7 @@ namespace App\Console;
 
 
 use App\Exception\CommandException;
+use App\Helper\ConfigHelper;
 use App\Helper\ImageHelper;
 use App\Helper\LoggingHelper;
 
@@ -113,5 +114,11 @@ class CommandWrapper
         $output = [];
         $exit_code = 248;
         exec('mkdir -p ' . $name,$output, $exit_code);
+    }
+
+    public static function triggerAsyncWorker()
+    {
+        $appRoot = ConfigHelper::get('app_root');
+        exec('php ' . $appRoot . '/bin/console app:worker 1>/dev/null 2>/dev/null &');
     }
 }
