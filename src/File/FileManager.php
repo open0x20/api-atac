@@ -72,4 +72,11 @@ class FileManager
             $filepath . '.cover'
         );
     }
+
+    public static function streamFile(Track $track)
+    {
+        $filepath = ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.mp3';
+
+        return file_get_contents($filepath);
+    }
 }

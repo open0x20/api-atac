@@ -54,7 +54,7 @@ class ResponseSubscriber implements EventSubscriberInterface
         // Error, invalid response returned by controller.
         // Must be of type \App\Dto\Response\Response.
         // Therefore, create a new error response!
-        if (!($responseDto instanceof \App\Dto\Response\Response)) {
+        if (!($responseDto instanceof \App\Dto\Response\Response) && !($responseDto instanceof Response)) {
             $responseDto = DtoHelper::createResponseDto(500, null, array(
                 'Internal Server Error (' . __CLASS__ . ', ' . __FUNCTION__ . ')'
             ));

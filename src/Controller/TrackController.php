@@ -91,6 +91,21 @@ class TrackController extends AbstractController
     }
 
     /**
+     * @Route("/stream/{trackId}", name="stream", methods={"GET"})
+     * @param Request $request
+     * @param int $trackId
+     * @return Response
+     * @throws TrackException
+     */
+    public function streamAction(Request $request, int $trackId)
+    {
+        $data = TrackModel::stream($trackId);
+
+        // Response
+        return new Response($data, 200, ['Content-Type' => 'application/x-download']);
+    }
+
+    /**
      * @Route("/test", name="test", methods={"POST"})
      * @param Request $request
      * @return void

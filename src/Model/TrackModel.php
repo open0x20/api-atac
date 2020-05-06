@@ -23,6 +23,8 @@ class TrackModel
 {
     /**
      * @param AddDto $addDto
+     * @return array
+     * @throws TrackException
      */
     public static function create(AddDto $addDto)
     {
@@ -58,6 +60,8 @@ class TrackModel
 
     /**
      * @param UpdateDto $updateDto
+     * @return array
+     * @throws TrackException
      */
     public static function update(UpdateDto $updateDto)
     {
@@ -104,10 +108,11 @@ class TrackModel
 
     /**
      * @param IdDto $idDto
+     * @return array
+     * @throws TrackException
      */
     public static function delete(IdDto $idDto)
     {
-        $artistRepo = Database::getInstance()->getRepository(Artist::class);
         $trackRepo = Database::getInstance()->getRepository(Track::class);
         $trackArtistRepo = Database::getInstance()->getRepository(TrackArtist::class);
 
@@ -129,5 +134,23 @@ class TrackModel
         return [
             'id' => $trackId
         ];
+    }
+
+    /**
+     * @param int $trackId
+     * @return false|string
+     * @throws TrackException
+     */
+    public static function stream(int $trackId)
+    {
+        $trackRepo = Database::getInstance()->getRepository(Track::class);
+
+        // find track in database
+        $track = $trackRepo->find($trackId);
+        if ($track === null) {
+            throw new TrackException('No track found for given id.', 400);
+        }
+
+        return FileManager::streamFile($track);
     }
 }
