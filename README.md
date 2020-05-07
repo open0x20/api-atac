@@ -10,11 +10,12 @@ A better description can be found in the *swagger.json* file.
 
 | Method | Path                  | Auth           | Description                                         |
 |--------|-----------------------|----------------|-----------------------------------------------------|
-| POST   | /add                  | basic          | Add a track and add to the conversion queue         |
-| POST   | /update               | basic          | Update a track and add to the conversion queue      |
+| POST   | /add                  | basic          | Add a track and add to the conversion queue.        |
+| POST   | /update               | basic          | Update a track and add to the conversion queue.     |
 | POST   | /delete               | basic          | Delete a track and remove it from permanent storage.|
 | GET    | /info/artists         | basic          | List of all unique artists.                         |
 | GET    | /info/tracks          | basic          | List of all unique tracks (incl. metadata).         |
+| GET    | /stream/{trackId}     | basic          | Returns the requested track for download.           |
 
 ### Example Requests
 #### POST /add

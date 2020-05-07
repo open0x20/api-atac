@@ -2,15 +2,10 @@
 
 namespace App\Model;
 
-
 use App\Database\Database;
 use App\Entity\Artist;
 use App\Entity\Track;
 
-/**
- * Class InfoModel
- * @package App\Model
- */
 class InfoModel
 {
     /**
@@ -28,6 +23,7 @@ class InfoModel
             $data['artists'][] = $e->getName();
         }
 
+        // sort alphabetically
         sort($data['artists']);
 
         // return artists
@@ -38,6 +34,7 @@ class InfoModel
      * @param int $limit
      * @param int $offset
      * @return mixed
+     * TODO optimize pagination
      */
     public static function getTracks(int $limit, int $offset)
     {
@@ -45,14 +42,21 @@ class InfoModel
         $allTrackEntities = Database::getInstance()->getRepository(Track::class)->findAll();
         $allTrackEntities = array_values($allTrackEntities); // map into 0..n key array
 
-        // map into string array
+        // prepare resulting structure
         $data = [];
         $data['meta'] = [];
         $data['tracks'] = [];
-        /**
-         * @var $e Track
-         */
 
+        /* pagination calculations
+         * Example: There are 100 Tracks (0-99).
+         * For $limit = 0,  $offset = 0   iterates over: nothing (loop skipped)
+         * For $limit = 10, $offset = 0   iterates over: 0-9
+         * For $limit = 10, $offset = 10  iterates over: 10-19
+         * For $limit = 10, $offset = 90  iterates over: 90-99
+         * For $limit = 10, $offset = 95  iterates over: 95-99
+         * For $limit = 10, $offset = 99  iterates over: 99
+         * For $limit = 10, $offset = 100 iterates over: nothing (loop skipped)
+         */
         $iStart = $offset;
         $iLimit = ($offset + $limit) > count($allTrackEntities) ? count($allTrackEntities) : ($offset + $limit);
 
@@ -82,6 +86,7 @@ class InfoModel
             ];
         }
 
+        // add additional metadata
         $data['meta'] = [
             'countOverall' => count($allTrackEntities),
             'countRequest' => count($data['tracks'])

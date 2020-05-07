@@ -99,10 +99,14 @@ class TrackController extends AbstractController
      */
     public function streamAction(Request $request, int $trackId)
     {
+        // Processing
         $data = TrackModel::stream($trackId);
 
         // Response
-        return new Response($data, 200, ['Content-Type' => 'application/x-download']);
+        return new Response($data, 200, [
+            'Content-Type' => 'application/x-download',
+            'Content-Disposition' => 'attachment;filename=testing.mp3'
+        ]);
     }
 
     /**

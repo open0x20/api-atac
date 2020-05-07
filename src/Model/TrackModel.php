@@ -2,23 +2,17 @@
 
 namespace App\Model;
 
-
 use App\Console\CommandWrapper;
 use App\Database\Database;
 use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
 use App\Dto\Request\UpdateDto;
-use App\Entity\Artist;
 use App\Entity\Track;
 use App\Entity\TrackArtist;
 use App\Exception\TrackException;
 use App\File\FileManager;
 use App\Helper\ArtistHelper;
 
-/**
- * Class TrackModel
- * @package App\Model
- */
 class TrackModel
 {
     /**
@@ -45,8 +39,8 @@ class TrackModel
         $track->setModified(true);
         $trackRepo->persistTrack($track);
 
+        // save trackArtists into database
         $trackArtists = ArtistHelper::createTrackArtistsFromStringArrays($track, $addDto->artists, $addDto->featuring);
-
         $trackArtistRepo->persistTrackArtists($trackArtists);
 
         // trigger async worker
@@ -83,6 +77,7 @@ class TrackModel
         $track->setCoverUrl($updateDto->urlCover);
         $track->setAlbum($updateDto->album);
         $track->setModified(true);
+        $trackRepo->persistTrack($track);
 
         // remove old trackArtists
         $trackArtistRepo->removeTrackArtists($track->getArtists());
@@ -96,11 +91,10 @@ class TrackModel
             )
         );
 
-        $trackRepo->persistTrack($track);
-
         // trigger async worker
         CommandWrapper::triggerAsyncWorker();
 
+        // return database track id
         return [
             'id' => $track->getId()
         ];
@@ -121,7 +115,7 @@ class TrackModel
         if ($track === null) {
             throw new TrackException('No track found for given id.', 400);
         }
-        $trackId = $track->getId();
+        $removedTrackId = $track->getId();
 
         // remove ytv from local storage
         FileManager::removeFromStorage($track);
@@ -132,7 +126,7 @@ class TrackModel
 
         // return removed database id
         return [
-            'id' => $trackId
+            'id' => $removedTrackId
         ];
     }
 
@@ -151,6 +145,7 @@ class TrackModel
             throw new TrackException('No track found for given id.', 400);
         }
 
+        // return raw file
         return FileManager::streamFile($track);
     }
 }
