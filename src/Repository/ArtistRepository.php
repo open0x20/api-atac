@@ -25,14 +25,29 @@ class ArtistRepository extends ServiceEntityRepository
      */
     public function findByNames($names)
     {
+        $artistRepo = $this->getEntityManager()->getRepository(Artist::class);
+
         if ($names === null) {
             return [];
         }
-        $query = $this->getEntityManager()
-            ->createQuery('SELECT a FROM App\\Entity\\Artist a WHERE a.name IN (:names)')
-            ->setParameter('names', '' . implode(', ', $names) . '');
 
-        return $query->getResult();
+        $artists = [];
+        foreach ($names as $name) {
+            $a = $artistRepo->findOneBy([
+                'name' => $name
+            ]);
+            if ($a !== null) {
+                $artists[] = $a;
+            }
+        }
+
+        //$query = $this->getEntityManager()
+        //    ->createQuery('SELECT a FROM App\\Entity\\Artist a WHERE a.name IN (:names)')
+        //    ->setParameter('names', '"' . implode('", "', $names) . '"');
+
+        //return $query->getResult();
+
+        return $artists;
     }
 
     /**

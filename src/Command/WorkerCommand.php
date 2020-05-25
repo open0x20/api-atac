@@ -15,7 +15,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -69,7 +68,9 @@ class WorkerCommand extends Command
 
             FileManager::downloadCoverFile($track);
             FileManager::downloadVideoFile($track);
-
+            /**
+             * @var $track Track
+             */
             CommandWrapper::ffmpeg(
                 $filepath,
                 $filepath . '.mp3',

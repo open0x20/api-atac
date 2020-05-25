@@ -13,7 +13,7 @@ class CommandWrapper
     public static function wget(string $url, string $targetFilePath): void
     {
         $output = [];
-        $exit_code = 253;
+        $exit_code = 255;
         exec('wget "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
 
         if ($exit_code !== 0) {
@@ -54,7 +54,7 @@ class CommandWrapper
         }
 
         $output = [];
-        $exit_code = 255;
+        $exit_code = 253;
         $ffmpeg_metadata_params = [
             '-map 0:0',
             '-map 1:0',
@@ -96,7 +96,7 @@ class CommandWrapper
     public static function rm($targetFilePath)
     {
         $output = [];
-        $exit_code = 249;
+        $exit_code = 252;
         if (file_exists($targetFilePath)) {
             exec('rm ' . $targetFilePath, $output, $exit_code);
         }
@@ -105,15 +105,24 @@ class CommandWrapper
     public static function mv($sourceFilePath, $targetFilePath)
     {
         $output = [];
-        $exit_code = 248;
+        $exit_code = 251;
         exec('mv ' . $sourceFilePath . ' ' . $targetFilePath, $output, $exit_code);
     }
 
     public static function mkdir($name)
     {
         $output = [];
-        $exit_code = 248;
+        $exit_code = 250;
         exec('mkdir -p ' . $name,$output, $exit_code);
+    }
+
+    public static function psgrep($filter)
+    {
+        $output = [];
+        $exit_code = 249;
+        exec('ps -aux | grep "' . $filter .'"',$output, $exit_code);
+
+        return $output;
     }
 
     public static function triggerAsyncWorker()

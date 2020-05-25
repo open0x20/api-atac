@@ -5,9 +5,15 @@ namespace App\Model;
 use App\Database\Database;
 use App\Entity\Artist;
 use App\Entity\Track;
+use App\Helper\ImageHelper;
+use App\Helper\LockHelper;
+use App\Helper\ParserHelper;
+use Symfony\Component\Console\Command\LockableTrait;
 
 class InfoModel
 {
+    use LockableTrait;
+
     /**
      * @return mixed
      */
@@ -94,5 +100,89 @@ class InfoModel
 
         // return tracks
         return $data;
+    }
+
+    /**
+     * @param $url
+     * @return string|null
+     */
+    public static function checkCover(?string $url)
+    {
+        if ($url === null) {
+            return null;
+        }
+
+        $cover = file_get_contents($url);
+
+        if ($cover === false) {
+            return null;
+        }
+
+        if (strlen($cover) < 100) {
+            return null;
+        }
+
+        return ImageHelper::getFiletype($cover);
+    }
+
+    /**
+     * @param string|null $url
+     * @return mixed|string|null
+     */
+    public static function getYtvInfo(?string $url)
+    {
+        if ($url === null) {
+            return null;
+        }
+
+        $htmlYtv = file_get_contents($url);
+
+
+        if ($htmlYtv === false) {
+            return null;
+        }
+
+        $title = ParserHelper::getStringBetween($htmlYtv, 'videoTitle\":\"', '\"}},');
+        $title2 = ParserHelper::getStringBetween($htmlYtv, '<title>', '</title>', 0, 0, 10);
+        $title2 = html_entity_decode($title2);
+        return [
+            'title' => $title,
+            'alternativeTitle' => $title2,
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getApplicationStatus()
+    {
+        $trackRepo = Database::getInstance()->getRepository(Track::class);
+        $stats = [
+            'isRunning' => false,
+            'tracks' => [
+                'all' => 0,
+                'queued' => 0,
+                'done' => 0,
+            ]
+        ];
+
+        $lh = new LockHelper();
+        if (!$lh->getLock()) {
+            $stats['isRunning'] = true;
+        }
+        $lh->releaseLock();
+
+        $allUnfinishedConversions = $trackRepo->findBy([
+            'modified' => true
+        ]);
+        $allDoneCoversions = $trackRepo->findBy([
+            'modified' => false
+        ]);
+
+        $stats['tracks']['all'] = count($allDoneCoversions) + count($allUnfinishedConversions);
+        $stats['tracks']['queued'] = count($allUnfinishedConversions);
+        $stats['tracks']['done'] = count($allDoneCoversions);
+
+        return $stats;
     }
 }

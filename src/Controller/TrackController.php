@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Console\CommandWrapper;
 use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
 use App\Dto\Request\UpdateDto;
@@ -18,6 +19,17 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TrackController extends AbstractController
 {
+    /**
+     * @Route("/add", name="options", methods={"OPTIONS"})
+     * @param Request $request
+     */
+    public function options(Request $request)
+    {
+        return new Response('', 200, [
+            'Access-Control-Allow-Methods' => 'POST, OPTIONS',
+            'Access-Control-Allow-Headers' => 'Content-Type',
+        ]);
+    }
     /**
      * @Route("/add", name="add", methods={"POST"})
      * @param Request $request
@@ -99,23 +111,29 @@ class TrackController extends AbstractController
      */
     public function streamAction(Request $request, int $trackId)
     {
+        // Fetch query parameters
+        $name = $request->query->has('name') ? $request->query->get('name') : 'unknown';
+        $name = urldecode($name);
+
         // Processing
         $data = TrackModel::stream($trackId);
 
         // Response
         return new Response($data, 200, [
             'Content-Type' => 'application/x-download',
-            'Content-Disposition' => 'attachment;filename=testing.mp3'
+            'Content-Disposition' => 'attachment;filename="' . $name . '.mp3"'
         ]);
     }
 
     /**
      * @Route("/test", name="test", methods={"POST"})
      * @param Request $request
-     * @return void
+     * @return Response
      */
     public function testAction(Request $request)
     {
+        CommandWrapper::triggerAsyncWorker();
 
+        return new Response('', 200);
     }
 }

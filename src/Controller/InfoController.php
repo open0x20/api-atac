@@ -42,4 +42,54 @@ class InfoController extends AbstractController
         // Response
         return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);
     }
+
+    /**
+     * @Route("/info/check_ytv", name="info_check_ytv", methods={"GET"})
+     * @param Request $request
+     * @return \App\Dto\Response\Response
+     */
+    public function getYtvInfo(Request $request)
+    {
+        // Fetch query parameters
+        $url = $request->query->has('url') ? $request->query->get('url') : null;
+        $url = urldecode($url);
+
+        // Processing
+        $data = InfoModel::getYtvInfo($url);
+
+        // Response
+        return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);
+    }
+
+    /**
+     * @Route("/info/check_cover", name="info_check_cover", methods={"GET"})
+     * @param Request $request
+     * @return \App\Dto\Response\Response
+     */
+    public function checkCoverAction(Request $request)
+    {
+        // Fetch query parameters
+        $url = $request->query->has('url') ? $request->query->get('url') : null;
+        $url = urldecode($url);
+
+        // Processing
+        $data = InfoModel::checkCover($url);
+
+        // Response
+        return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);
+    }
+
+    /**
+     * @Route("/info/stats", name="info_stats", methods={"GET"})
+     * @param Request $request
+     * @return \App\Dto\Response\Response
+     */
+    public function getApplicationStatus(Request $request)
+    {
+        // Processing
+        $data = InfoModel::getApplicationStatus();
+
+        // Response
+        return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);
+    }
 }
