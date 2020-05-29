@@ -61,10 +61,11 @@ class FileManager
     public static function downloadVideoFile(Track $track)
     {
         // Get the direct download link
-        $link = DirectLinkExtrator::getLinkAction($track->getYtv());
+        //$link = DirectLinkExtrator::getLinkAction($track->getYtv());
 
         // Download the file
-        CommandWrapper::wget($link, ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
+        //CommandWrapper::wget($link, ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
+        CommandWrapper::youtubedl($track->getYtv(), ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
     }
 
     /**

@@ -22,6 +22,19 @@ class CommandWrapper
         }
     }
 
+    public static function youtubedl(string $url, string $targetFilePath)
+    {
+        $output = [];
+        $exit_code = 255;
+        // -o mymd5hasherino.%(ext)s
+        exec('youtube-dl -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
+
+        if ($exit_code !== 0) {
+            LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
+            throw new CommandException('youtube-dl(1) failed with code ' . $exit_code, 500);
+        }
+    }
+
     public static function ffmpeg(string $sourceFilePath, string $targetFilePath, string $title, string $artist, string $album, string $coverFilePath): void
     {
         $tmpTargetFilePath = $targetFilePath . '.tmp.mp3';
