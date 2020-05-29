@@ -38,7 +38,7 @@ class WorkerCommand extends Command
     {
         $this
             ->setDescription('Converts all ytv queued for processing.')
-            ->addOption('--verbose','-v', InputOption::VALUE_OPTIONAL, 'Prints additional information.')
+            ->addOption('verbose','v', InputOption::VALUE_NONE, 'Prints additional information.')
         ;
     }
 
@@ -50,7 +50,7 @@ class WorkerCommand extends Command
         }
 
         $verbose = false;
-        if ($input->getOption('--verbose')) {
+        if ($input->getOption('verbose')) {
             $verbose = true;
         }
 
