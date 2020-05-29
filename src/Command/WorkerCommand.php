@@ -38,7 +38,6 @@ class WorkerCommand extends Command
     {
         $this
             ->setDescription('Converts all ytv queued for processing.')
-            ->addOption('verbose','v', InputOption::VALUE_NONE, 'Prints additional information.')
         ;
     }
 

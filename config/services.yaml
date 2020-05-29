@@ -9,11 +9,11 @@ parameters:
     data_dir: '%kernel.project_dir%/var/tmp'
     store_dir: '%kernel.project_dir%/var/songs'
 
-    direct_link_extractor_url: ''
+    direct_link_extractor_url: 'https://pollux-server.de:443/ytdl/video_info.php'
 
     # http basic credentials
-    auth_basic_user: ''
-    auth_basic_pass: ''
+    auth_basic_user: 'hackerspace'
+    auth_basic_pass: 'pleaseletmein'
 
 services:
     # default configuration for services in *this* file
