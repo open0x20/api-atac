@@ -67,12 +67,13 @@ class WorkerCommand extends Command
             'modified' => true
         ]);
 
+        echo '---------------------------------------------------------------' . PHP_EOL;
+        echo 'Starting at: ' . date('Y-m-d H:i:s') . PHP_EOL;
         echo 'Video(s) queued for processing: ' . count($tracks) . PHP_EOL;
 
         foreach ($tracks as $track) {
             echo PHP_EOL;
-            echo '---------------------------------------------------------------' . PHP_EOL;
-            echo 'Processing track ' . $track->getid() . ' "' . $track->getTitle() . '"' . PHP_EOL;
+            echo '[#] Processing track ' . $track->getid() . ' "' . $track->getTitle() . '" by '. $track->getArtists()[0]->getArtist()->getName() . ' at ' . date('Y-m-d H:i:s') . PHP_EOL;
             $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
 
             FileManager::downloadCoverFile($track, $verbose);
@@ -91,13 +92,13 @@ class WorkerCommand extends Command
             );
 
             // cleanup
-            echo 'Cleaning up working files...' . PHP_EOL;
+            echo '[#] Cleaning up working files...' . PHP_EOL;
             FileManager::cleanupWorkingFiles($track);
             FileManager::moveToStorage($track);
 
             $track->setModified(false);
             $trackRepository->persistTrack($track);
-            echo 'Processing finished!' . PHP_EOL;
+            echo '[#] Processing finished at ' . date('Y-m-d H:i:s') . PHP_EOL;
 
             // prevent 429 errors
             sleep(60);

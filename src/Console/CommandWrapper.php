@@ -144,7 +144,7 @@ class CommandWrapper
 
         $output = [];
         $exit_code = 249;
-        self::exec('php ' . $appRoot . '/bin/console app:worker 1>/dev/null 2>/dev/null &', $output, $exit_code);
+        self::exec('php ' . $appRoot . '/bin/console app:worker 1>' . $appRoot . '/var/command.log 2>' . $appRoot . '/var/command.log &', $output, $exit_code);
     }
 
     public static function exec(string $command, array &$output, int& $return_var)
