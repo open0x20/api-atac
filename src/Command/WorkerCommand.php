@@ -86,6 +86,9 @@ class WorkerCommand extends Command
 
             $track->setModified(false);
             $trackRepository->persistTrack($track);
+
+            // prevent 429 errors
+            sleep(60);
         }
 
         $this->release();
