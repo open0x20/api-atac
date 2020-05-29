@@ -10,11 +10,11 @@ use App\Helper\LoggingHelper;
 
 class CommandWrapper
 {
-    public static function wget(string $url, string $targetFilePath): void
+    public static function wget(string $url, string $targetFilePath, bool $verbose = false): void
     {
         $output = [];
         $exit_code = 255;
-        exec('wget "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
+        self::exec('wget ' . ($verbose ? '' : '-q') . ' "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
@@ -22,12 +22,12 @@ class CommandWrapper
         }
     }
 
-    public static function youtubedl(string $url, string $targetFilePath)
+    public static function youtubedl(string $url, string $targetFilePath, bool $verbose = false)
     {
         $output = [];
         $exit_code = 255;
         // -o mymd5hasherino.%(ext)s
-        exec('youtube-dl -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
+        self::exec('youtube-dl ' . ($verbose ? '' : '-q') . ' -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
@@ -35,7 +35,7 @@ class CommandWrapper
         }
     }
 
-    public static function ffmpeg(string $sourceFilePath, string $targetFilePath, string $title, string $artist, string $album, string $coverFilePath): void
+    public static function ffmpeg(string $sourceFilePath, string $targetFilePath, string $title, string $artist, string $album, string $coverFilePath, bool $verbose = false): void
     {
         $tmpTargetFilePath = $targetFilePath . '.tmp.mp3';
 
@@ -52,14 +52,14 @@ class CommandWrapper
 
         $command = 'ffmpeg'
             . ' -y'
-            #. ' -loglevel panic'
-            #. ' -hide_banner'
+            . ($verbose ? '' : ' -loglevel panic')
+            . ($verbose ? '' : ' -hide_banner')
             . ' -i "' . $sourceFilePath . '"'
             . ' ' . $ffmpeg_metadata_params
             . ' "' . $tmpTargetFilePath . '"'
         ;
 
-        exec($command, $output, $exit_code);
+        self::exec($command, $output, $exit_code);
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output), ['command' => $command]);
@@ -87,15 +87,15 @@ class CommandWrapper
 
         $command = 'ffmpeg'
             . ' -y'
-            #. ' -loglevel panic'
-            #. ' -hide_banner'
+            . ($verbose ? '' : ' -loglevel panic')
+            . ($verbose ? '' : ' -hide_banner')
             . ' -i "' . $tmpTargetFilePath . '"'
             . ' -i "' . $coverFilePath . '"'
             . ' ' . $ffmpeg_metadata_params
             . ' "' . $targetFilePath . '"'
         ;
 
-        exec($command, $output, $exit_code);
+        self::exec($command, $output, $exit_code);
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output), ['command' => $command]);
@@ -111,7 +111,7 @@ class CommandWrapper
         $output = [];
         $exit_code = 252;
         if (file_exists($targetFilePath)) {
-            exec('rm ' . $targetFilePath, $output, $exit_code);
+            self::exec('rm ' . $targetFilePath, $output, $exit_code);
         }
     }
 
@@ -119,21 +119,21 @@ class CommandWrapper
     {
         $output = [];
         $exit_code = 251;
-        exec('mv ' . $sourceFilePath . ' ' . $targetFilePath, $output, $exit_code);
+        self::exec('mv ' . $sourceFilePath . ' ' . $targetFilePath, $output, $exit_code);
     }
 
     public static function mkdir($name)
     {
         $output = [];
         $exit_code = 250;
-        exec('mkdir -p ' . $name,$output, $exit_code);
+        self::exec('mkdir -p ' . $name,$output, $exit_code);
     }
 
     public static function psgrep($filter)
     {
         $output = [];
         $exit_code = 249;
-        exec('ps -aux | grep "' . $filter .'"',$output, $exit_code);
+        self::exec('ps -aux | grep "' . $filter .'"',$output, $exit_code);
 
         return $output;
     }
@@ -141,6 +141,15 @@ class CommandWrapper
     public static function triggerAsyncWorker()
     {
         $appRoot = ConfigHelper::get('app_root');
-        exec('php ' . $appRoot . '/bin/console app:worker 1>/dev/null 2>/dev/null &');
+
+        $output = [];
+        $exit_code = 249;
+        self::exec('php ' . $appRoot . '/bin/console app:worker 1>/dev/null 2>/dev/null &', $output, $exit_code);
+    }
+
+    public static function exec(string $command, array &$output, int& $return_var)
+    {
+        echo '[CMD] Executing: ' . $command . PHP_EOL;
+        exec($command, $output, $return_var);
     }
 }

@@ -14,6 +14,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -37,6 +38,7 @@ class WorkerCommand extends Command
     {
         $this
             ->setDescription('Converts all ytv queued for processing.')
+            ->addOption('--verbose','-v', InputOption::VALUE_OPTIONAL, 'Prints additional information.')
         ;
     }
 
@@ -45,6 +47,11 @@ class WorkerCommand extends Command
         if (!$this->lock()) {
             echo 'Already running. Terminating...' . PHP_EOL;
             return 0;
+        }
+
+        $verbose = false;
+        if ($input->getOption('--verbose')) {
+            $verbose = true;
         }
 
         // Create data/store directories if they don't exist yet
@@ -64,10 +71,13 @@ class WorkerCommand extends Command
         echo 'Video(s) queued for processing: ' . count($tracks) . PHP_EOL;
 
         foreach ($tracks as $track) {
+            echo PHP_EOL;
+            echo '---------------------------------------------------------------';
+            echo 'Processing track ' . $track->getid() . ' "' . $track->getTitle() . '"' . PHP_EOL;
             $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
 
-            FileManager::downloadCoverFile($track);
-            FileManager::downloadVideoFile($track);
+            FileManager::downloadCoverFile($track, $verbose);
+            FileManager::downloadVideoFile($track, $verbose);
             /**
              * @var $track Track
              */
@@ -77,15 +87,18 @@ class WorkerCommand extends Command
                 $track->getTitle(),
                 $track->getArtists()[0]->getArtist()->getName(),
                 $track->getAlbum() !== null ? $track->getAlbum() : '',
-                $filepath . '.cover'
+                $filepath . '.cover',
+                $verbose
             );
 
             // cleanup
+            echo 'Cleaning up working files...' . PHP_EOL;
             FileManager::cleanupWorkingFiles($track);
             FileManager::moveToStorage($track);
 
             $track->setModified(false);
             $trackRepository->persistTrack($track);
+            echo 'Processing finished!' . PHP_EOL;
 
             // prevent 429 errors
             sleep(60);

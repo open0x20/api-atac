@@ -58,46 +58,24 @@ class FileManager
      * @throws \App\Exception\ApiException
      * @throws \App\Exception\CommandException
      */
-    public static function downloadVideoFile(Track $track)
+    public static function downloadVideoFile(Track $track, bool $verbose)
     {
         // Get the direct download link
         //$link = DirectLinkExtrator::getLinkAction($track->getYtv());
 
         // Download the file
         //CommandWrapper::wget($link, ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
-        CommandWrapper::youtubedl($track->getYtv(), ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
+        CommandWrapper::youtubedl($track->getYtv(), ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()), $verbose);
     }
 
     /**
      * @param Track $track
      * @throws \App\Exception\CommandException
      */
-    public static function downloadCoverFile(Track $track)
+    public static function downloadCoverFile(Track $track, bool $verbose)
     {
         $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
-        CommandWrapper::wget($track->getCoverUrl(), $filepath . '.cover');
-    }
-
-    /**
-     * @param Track $track
-     * @throws \App\Exception\ApiException
-     * @throws \App\Exception\CommandException
-     */
-    public static function convertTrack(Track $track)
-    {
-        $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
-
-        FileManager::downloadCoverFile($track);
-        FileManager::downloadVideoFile($track);
-
-        CommandWrapper::ffmpeg(
-            $filepath,
-            $filepath . '.mp3',
-            $track->getTitle(),
-            $track->getArtists()[0]->getArtist()->getName(),
-            $track->getAlbum() !== null ? $track->getAlbum() : '',
-            $filepath . '.cover'
-        );
+        CommandWrapper::wget($track->getCoverUrl(), $filepath . '.cover', $verbose);
     }
 
     /**
