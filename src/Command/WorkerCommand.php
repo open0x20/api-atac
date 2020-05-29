@@ -71,7 +71,7 @@ class WorkerCommand extends Command
 
         foreach ($tracks as $track) {
             echo PHP_EOL;
-            echo '---------------------------------------------------------------';
+            echo '---------------------------------------------------------------' . PHP_EOL;
             echo 'Processing track ' . $track->getid() . ' "' . $track->getTitle() . '"' . PHP_EOL;
             $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
 

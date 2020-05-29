@@ -89,6 +89,7 @@ class InfoModel
                 'title' => $e->getTitle(),
                 'album' => $e->getAlbum(),
                 'urlCover' => $e->getCoverUrl(),
+                'modified' => $e->getModified(),
             ];
         }
 
