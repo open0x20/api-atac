@@ -27,7 +27,7 @@ class CommandWrapper
         $output = [];
         $exit_code = 255;
         // -o mymd5hasherino.%(ext)s
-        self::exec('youtube-dl ' . ($verbose ? '' : '-q') . ' -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
+        self::exec('youtube-dl ' . ($verbose ? '' : '-q') . ' --no-playlist -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
