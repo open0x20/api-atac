@@ -14,7 +14,7 @@ class CommandWrapper
     {
         $output = [];
         $exit_code = 255;
-        self::exec('wget ' . ($verbose ? '' : '-q') . ' "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
+        self::exec('wget ' . ($verbose ? '' : '-q') . ' --no-check-certificate "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
