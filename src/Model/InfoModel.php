@@ -143,7 +143,7 @@ class InfoModel
             return null;
         }
 
-        $title = ParserHelper::getStringBetween($htmlYtv, 'title\":\"', '\"}},');
+        $title = ParserHelper::getStringBetween($htmlYtv, 'title\":\"', '\",');
         $title2 = ParserHelper::getStringBetween($htmlYtv, '<title>', '</title>', 0, 0, 10);
         $title2 = html_entity_decode($title2);
         return [
