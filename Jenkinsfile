@@ -24,13 +24,13 @@ pipeline {
                                 sshTransfer(
                                     cleanRemote: true,
                                     excludes: '',
-                                    execCommand: 'pwd; printenv; ls -al',
+                                    execCommand: 'cd /var/www/deployments/api-atac && composer install --ignore-platform-reqs',
                                     execTimeout: 120000,
                                     flatten: false,
                                     makeEmptyDirs: true,
                                     noDefaultExcludes: false,
                                     patternSeparator: '[, ]+',
-                                    remoteDirectory: 'atac',
+                                    remoteDirectory: 'api-atac',
                                     remoteDirectorySDF: false,
                                     removePrefix: '',
                                     sourceFiles: '**'
