@@ -6,14 +6,14 @@
 parameters:
     app_root: '%kernel.project_dir%'
 
-    data_dir: '%kernel.project_dir%/var/tmp'
-    store_dir: '%kernel.project_dir%/var/songs'
+    data_dir: '/var/www/deployments/data/api-atac/tmp'
+    store_dir: '/var/www/deployments/data/api-atac/songs'
 
-    direct_link_extractor_url: 'https://pollux-server.de:443/ytdl/video_info.php'
+    direct_link_extractor_url: ''
 
     # http basic credentials
-    auth_basic_user: 'hackerspace'
-    auth_basic_pass: 'pleaseletmein'
+    auth_basic_user: ''
+    auth_basic_pass: ''
 
 services:
     # default configuration for services in *this* file
