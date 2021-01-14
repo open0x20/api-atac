@@ -121,6 +121,7 @@ class TrackController extends AbstractController
         // Response
         return new Response($data, 200, [
             'Content-Type' => 'application/x-download',
+            'Content-Length' => strlen($data),
             'Content-Disposition' => 'attachment;filename="' . $name . '.mp3"'
         ]);
     }
