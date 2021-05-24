@@ -88,4 +88,18 @@ class FileManager
 
         return file_get_contents($filepath);
     }
+
+    /**
+     * @return string[]
+     */
+    public static function getAllFilenames()
+    {
+        $filenames = [];
+
+        foreach((new \DirectoryIterator(ConfigHelper::get('store_dir'))) as $item) {
+            $filenames[] = $item->getFilename();
+        }
+
+        return $filenames;
+    }
 }

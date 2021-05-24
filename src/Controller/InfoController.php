@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Dto\Request\DifferenceDto;
+use App\Exception\ValidationException;
 use App\Helper\DtoHelper;
 use App\Model\InfoModel;
+use App\Serializer\Serializer;
+use App\Validator\Validator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,6 +92,29 @@ class InfoController extends AbstractController
     {
         // Processing
         $data = InfoModel::getApplicationStatus();
+
+        // Response
+        return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);
+    }
+
+    /**
+     * @Route("/info/difference", name="info_difference", methods={"GET"})
+     * @param Request $request
+     * @return \App\Dto\Response\Response
+     */
+    public function differenceAction(Request $request)
+    {
+        // Deserialize the payload
+        $differenceDto = Serializer::getInstance()->deserialize($request->getContent(), DifferenceDto::class, 'json');
+
+        // Validate the resulting dto
+        $violations = Validator::getInstance()->validate($differenceDto);
+        if (count($violations) > 0) {
+            throw new ValidationException($violations);
+        }
+
+        // Processing
+        $data = InfoModel::getDifference($differenceDto);
 
         // Response
         return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);

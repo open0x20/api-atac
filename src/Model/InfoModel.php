@@ -3,8 +3,10 @@
 namespace App\Model;
 
 use App\Database\Database;
+use App\Dto\Request\DifferenceDto;
 use App\Entity\Artist;
 use App\Entity\Track;
+use App\File\FileManager;
 use App\Helper\ImageHelper;
 use App\Helper\LockHelper;
 use App\Helper\ParserHelper;
@@ -185,5 +187,46 @@ class InfoModel
         $stats['tracks']['done'] = count($allDoneCoversions);
 
         return $stats;
+    }
+
+    public static function getDifference(DifferenceDto $differenceDto)
+    {
+        $existingFilenames = FileManager::getAllFilenames();
+        $receivedFilenames = $differenceDto->filenames;
+        $differenceCount = count($existingFilenames) - count($receivedFilenames);
+
+        // Case: Everything is different
+        if (count($receivedFilenames) === 0) {
+            return $existingFilenames;
+        }
+
+        // Case: There is no difference
+        if ($differenceCount <= 0) {
+            return [];
+        }
+
+        // The variable $receivedFilenames can either be smaller or equal to $existingFilenames.
+        // They will mostly contain the same data unless it's the first sync.
+
+        // Sort both arrays. I think they got already sorted by the filesystem but we can't rely on that.
+        sort($existingFilenames);
+        sort($receivedFilenames);
+
+        // Iterate over $existingFilenames since it contains all possible values
+        // Keep a separate iterator $j for $receivedFilenames
+        $difference = [];
+        $j = 0;
+        for ($i = 0; $i < count($existingFilenames); $i++) {
+            if ($existingFilenames[$i] !== $receivedFilenames[$j]) {
+                $difference[] = $existingFilenames[$i];
+            } else {
+                $j++;
+            }
+        }
+
+        return [
+            'differenceCount' => count($difference),
+            'difference' => $difference
+        ];
     }
 }
