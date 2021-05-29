@@ -98,7 +98,7 @@ class InfoController extends AbstractController
     }
 
     /**
-     * @Route("/info/difference", name="info_difference", methods={"GET"})
+     * @Route("/info/difference", name="info_difference", methods={"POST"})
      * @param Request $request
      * @return \App\Dto\Response\Response
      */
