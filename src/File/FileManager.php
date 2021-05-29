@@ -97,7 +97,14 @@ class FileManager
         $filenames = [];
 
         foreach((new \DirectoryIterator(ConfigHelper::get('store_dir'))) as $item) {
-            $filenames[] = $item->getFilename();
+            if ($item->isDot() || $item->isDir()) {
+                continue;
+            }
+
+            // Example filename "01a411048718c8e47ae0f3c926dbafb3.mp3"
+            if (strtolower($item->getExtension()) === 'mp3' && strlen($item->getFilename()) === 36) {
+                $filenames[] = $item->getFilename();
+            }
         }
 
         return $filenames;
