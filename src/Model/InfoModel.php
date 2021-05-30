@@ -197,12 +197,18 @@ class InfoModel
 
         // Case: Everything is different
         if (count($receivedFilenames) === 0) {
-            return $existingFilenames;
+            return [
+                'differenceCount' => count($existingFilenames),
+                'difference' => $existingFilenames
+            ];
         }
 
         // Case: There is no difference
         if ($differenceCount <= 0) {
-            return [];
+            return [
+                'differenceCount' => 0,
+                'difference' => []
+            ];
         }
 
         // The variable $receivedFilenames can either be smaller or equal to $existingFilenames.
