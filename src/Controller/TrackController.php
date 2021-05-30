@@ -6,6 +6,7 @@ use App\Console\CommandWrapper;
 use App\Dto\Request\AddDto;
 use App\Dto\Request\IdDto;
 use App\Dto\Request\UpdateDto;
+use App\Exception\ApiException;
 use App\Exception\TrackException;
 use App\Exception\ValidationException;
 use App\Helper\DtoHelper;
@@ -123,6 +124,26 @@ class TrackController extends AbstractController
             'Content-Type' => 'application/x-download',
             'Content-Length' => strlen($data),
             'Content-Disposition' => 'attachment;filename="' . $name . '.mp3"'
+        ]);
+    }
+
+    /**
+     * @Route("/download/{filename}", name="download", methods={"GET"})
+     * @param Request $request
+     * @param int $trackId
+     * @return Response
+     * @throws ApiException
+     */
+    public function downloadAction(Request $request, $filename)
+    {
+        // Processing
+        $data = TrackModel::download($filename);
+
+        // Response
+        return new Response($data, 200, [
+            'Content-Type' => 'application/x-download',
+            'Content-Length' => strlen($data),
+            'Content-Disposition' => 'attachment;filename="' . $filename . '"'
         ]);
     }
 

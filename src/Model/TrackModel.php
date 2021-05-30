@@ -9,6 +9,7 @@ use App\Dto\Request\IdDto;
 use App\Dto\Request\UpdateDto;
 use App\Entity\Track;
 use App\Entity\TrackArtist;
+use App\Exception\ApiException;
 use App\Exception\TrackException;
 use App\File\FileManager;
 use App\Helper\ArtistHelper;
@@ -147,5 +148,15 @@ class TrackModel
 
         // return raw file
         return FileManager::streamFile($track);
+    }
+
+    /**
+     * @param String $filename
+     * @return false|string
+     * @throws ApiException
+     */
+    public static function download($filename)
+    {
+        return FileManager::downloadFile($filename);
     }
 }

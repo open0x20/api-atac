@@ -5,6 +5,7 @@ namespace App\File;
 use App\Apis\DirectLinkExtrator;
 use App\Console\CommandWrapper;
 use App\Entity\Track;
+use App\Exception\ApiException;
 use App\Helper\ConfigHelper;
 
 class FileManager
@@ -108,5 +109,22 @@ class FileManager
         }
 
         return $filenames;
+    }
+
+    /**
+     * @param string $filename
+     * @return false|string
+     * @throws ApiException
+     */
+    public static function downloadFile(string $filename)
+    {
+        // Small validation
+        if (substr_count($filename, '.') != 1 || strpos($filename, '/') !== false) {
+            throw new ApiException('Invalid characters in filename.', 500);
+        }
+
+        $filepath = ConfigHelper::get('store_dir') . '/' . $filename;
+
+        return file_get_contents($filepath);
     }
 }
