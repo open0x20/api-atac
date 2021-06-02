@@ -138,7 +138,14 @@ class InfoModel
             return null;
         }
 
-        $htmlYtv = file_get_contents($url);
+        $options = array('http' => array(
+            'method'  => 'GET',
+            'header' => 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
+        ));
+
+        $context = stream_context_create($options);
+
+        $htmlYtv = file_get_contents($url, false, $context);
 
 
         if ($htmlYtv === false) {
