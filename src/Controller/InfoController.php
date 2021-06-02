@@ -37,7 +37,7 @@ class InfoController extends AbstractController
     public function tracksAction(Request $request)
     {
         // Fetch query parameters if provided, otherwise load default values
-        $limit = $request->query->has('limit') ? $request->query->get('limit') : 1000;
+        $limit = $request->query->has('limit') ? $request->query->get('limit') : 2000;
         $offset = $request->query->has('offset') ? $request->query->get('offset') : 0;
 
         // Processing
