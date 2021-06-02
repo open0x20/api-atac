@@ -148,11 +148,11 @@ class TrackController extends AbstractController
     }
 
     /**
-     * @Route("/test", name="test", methods={"POST"})
+     * @Route("/trigger", name="trigger", methods={"GET"})
      * @param Request $request
      * @return Response
      */
-    public function testAction(Request $request)
+    public function triggerAction(Request $request)
     {
         CommandWrapper::triggerAsyncWorker();
 
