@@ -44,7 +44,6 @@ class WorkerCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         if (!$this->lock()) {
-            echo 'Already running. Terminating...' . PHP_EOL;
             return 0;
         }
 
