@@ -121,7 +121,8 @@ class InfoModel
             return null;
         }
 
-        if (strlen($cover) < 100) {
+        // Filsize must be between 100 Bytes and 10MB
+        if (strlen($cover) < 100 || strlen($cover) > 1024 * 1024 * 10) {
             return null;
         }
 

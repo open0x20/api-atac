@@ -9,6 +9,9 @@ parameters:
     data_dir: '/var/www/deployments/data/api-atac/tmp'
     store_dir: '/var/www/deployments/data/api-atac/songs'
 
+    ffmpeg_path: '/usr/bin/ffmpeg'
+    youtubedl_path: '/usr/local/bin/youtube-dl'
+
     direct_link_extractor_url: ''
 
     # http basic credentials

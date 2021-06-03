@@ -14,7 +14,7 @@ class CommandWrapper
     {
         $output = [];
         $exit_code = 255;
-        self::exec('wget ' . ($verbose ? '' : '-q') . ' --no-check-certificate "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
+        self::exec('/usr/bin/wget ' . ($verbose ? '' : '-q') . ' --no-check-certificate "' . $url . '" -O "' . $targetFilePath . '"', $output, $exit_code); //-q for silent
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
@@ -27,7 +27,7 @@ class CommandWrapper
         $output = [];
         $exit_code = 255;
         // -o mymd5hasherino.%(ext)s
-        self::exec('youtube-dl ' . ($verbose ? '' : '-q') . ' --no-playlist -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
+        self::exec(ConfigHelper::get('youtubedl_path') . ' ' . ($verbose ? '' : '-q') . ' --no-playlist -r 1.0M -f bestaudio -o "' . $targetFilePath . '" "' . $url . '"', $output, $exit_code);
 
         if ($exit_code !== 0) {
             LoggingHelper::getInstance()->error(implode(PHP_EOL, $output));
@@ -50,7 +50,7 @@ class CommandWrapper
         ];
         $ffmpeg_metadata_params = implode(' ', $ffmpeg_metadata_params);
 
-        $command = 'ffmpeg'
+        $command = ConfigHelper::get('ffmpeg_path')
             . ' -y'
             . ($verbose ? '' : ' -loglevel panic')
             . ($verbose ? '' : ' -hide_banner')
@@ -85,7 +85,7 @@ class CommandWrapper
         CommandWrapper::mv($coverFilePath, $coverFilePath . '.' . $extension);
         $coverFilePath = $coverFilePath . '.' . $extension;
 
-        $command = 'ffmpeg'
+        $command = ConfigHelper::get('ffmpeg_path')
             . ' -y'
             . ($verbose ? '' : ' -loglevel panic')
             . ($verbose ? '' : ' -hide_banner')
@@ -144,7 +144,7 @@ class CommandWrapper
 
         $output = [];
         $exit_code = 249;
-        self::exec('php ' . $appRoot . '/bin/console app:worker 1>>' . $appRoot . '/var/command.log 2>>' . $appRoot . '/var/command.log &', $output, $exit_code);
+        self::exec('/usr/bin/php ' . $appRoot . '/bin/console app:worker 1>>' . $appRoot . '/var/command.log 2>>' . $appRoot . '/var/command.log &', $output, $exit_code);
     }
 
     public static function exec(string $command, array &$output, int& $return_var)
