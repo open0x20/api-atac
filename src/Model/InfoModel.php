@@ -85,7 +85,7 @@ class InfoModel
             // add to array
             $data['tracks'][] = [
                 'trackId' => $e->getId(),
-                'urlYtv' => $e->getYtv(),
+                'url' => $e->getUrl(),
                 'artists' => $artists,
                 'featuring' => $featuringArtists,
                 'title' => $e->getTitle(),
@@ -133,7 +133,7 @@ class InfoModel
      * @param string|null $url
      * @return mixed|string|null
      */
-    public static function getYtvInfo(?string $url)
+    public static function getUrlInfo(?string $url)
     {
         if ($url === null) {
             return null;
@@ -141,24 +141,24 @@ class InfoModel
 
         $options = array('http' => array(
             'method'  => 'GET',
-            'header' => 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0'
+            'header' => 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0'
         ));
 
         $context = stream_context_create($options);
 
-        $htmlYtv = file_get_contents($url, false, $context);
+        $html = file_get_contents($url, false, $context);
 
 
-        if ($htmlYtv === false) {
+        if ($html === false) {
             return null;
         }
 
-        $title = ParserHelper::getStringBetween($htmlYtv, 'title\":\"', '\",');
-        $title2 = ParserHelper::getStringBetween($htmlYtv, '<title>', '</title>', 0, 0, 10);
-        $title2 = html_entity_decode($title2);
+        $title = ParserHelper::getStringBetween($html, 'title\":\"', '\",');
+        $alternativeTitle = ParserHelper::getStringBetween($html, '<title>', '</title>', 0, 0, 10);
+        $alternativeTitle = html_entity_decode($alternativeTitle);
         return [
             'title' => $title,
-            'alternativeTitle' => $title2,
+            'alternativeTitle' => $alternativeTitle,
         ];
     }
 

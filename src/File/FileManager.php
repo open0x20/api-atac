@@ -24,9 +24,9 @@ class FileManager
      */
     public static function cleanupWorkingFiles(Track $track)
     {
-        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.cover.jpg');
-        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.cover.png');
-        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
+        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.cover.jpg');
+        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.cover.png');
+        CommandWrapper::rm(ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()));
     }
 
     /**
@@ -35,7 +35,7 @@ class FileManager
     public static function removeFromStorage(Track $track)
     {
         CommandWrapper::rm(
-            ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.mp3'
+            ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.mp3'
         );
     }
 
@@ -49,8 +49,8 @@ class FileManager
 
         // move to storage directory
         CommandWrapper::mv(
-            ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.mp3',
-            ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.mp3'
+            ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.mp3',
+            ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.mp3'
         );
     }
 
@@ -61,12 +61,8 @@ class FileManager
      */
     public static function downloadVideoFile(Track $track, bool $verbose)
     {
-        // Get the direct download link
-        //$link = DirectLinkExtrator::getLinkAction($track->getYtv());
-
         // Download the file
-        //CommandWrapper::wget($link, ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()));
-        CommandWrapper::youtubedl($track->getYtv(), ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()), $verbose);
+        CommandWrapper::youtubedl($track->getUrl(), ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()), $verbose);
     }
 
     /**
@@ -75,7 +71,7 @@ class FileManager
      */
     public static function downloadCoverFile(Track $track, bool $verbose)
     {
-        $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
+        $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl());
         CommandWrapper::wget($track->getCoverUrl(), $filepath . '.cover', $verbose);
     }
 
@@ -85,7 +81,7 @@ class FileManager
      */
     public static function streamFile(Track $track)
     {
-        $filepath = ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getYtv()) . '.mp3';
+        $filepath = ConfigHelper::get('store_dir') . '/' . FileManager::computeResultingFilename($track->getUrl()) . '.mp3';
 
         return file_get_contents($filepath);
     }

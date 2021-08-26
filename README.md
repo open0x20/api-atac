@@ -1,9 +1,11 @@
-# api-ytv-converter
-A RESTful API to download, convert and enhance media files.
+# api-atac
+A RESTful API to download, convert and enhance non-copyright-protected media files.
+
 ### Dependencies
  - PHP 7.2 or higher
  - FFMPEG globally installed
  - wget, ps, grep, mv, rm and mkdir globally installed
+ - cli invokable tools for your specific sources
 
 ### Endpoints
 A better description can be found in the *swagger.json* file.
@@ -16,7 +18,7 @@ A better description can be found in the *swagger.json* file.
 | GET    | /stream/{trackId}     | basic          | Returns the requested track for download.                                                                   |
 | GET    | /info/artists         | basic          | List of all unique artists.                                                                                 |
 | GET    | /info/tracks          | basic          | List of all unique tracks (incl. metadata).                                                                 |
-| GET    | /info/check_ytv       | basic          | Validates given ytv url and extracts metadata.                                                              |
+| GET    | /info/check_url       | basic          | Validates given url and extracts metadata.                                                                  |
 | GET    | /info/check_cover     | basic          | Validates given cover url and extracts metadata.                                                            |
 | GET    | /info/stats           | basic          | Outputs some application metadata and statistics.                                                           |
 | POST   | /info/difference      | basic          | Calculates the difference between the provided list of filenames and all files present on the data directory|
@@ -26,12 +28,12 @@ A better description can be found in the *swagger.json* file.
 ```
 Request:
 {
-  "urlYtv": "https://www.youtube.com/watch?v=af59U2BRRAU",
-  "artists": ["Rammstein"],
+  "url": "https://www.example.com/freesong",
+  "artists": ["Scott Buckley"],
   "featuring": [],
-  "title": "Rosenrot",
-  "album": "Rosenrot",
-  "urlCover": "https://live.staticflickr.com/33/64120185_9c754331e3.jpg"
+  "title": "Chasing Daylight",
+  "album": "",
+  "urlCover": "https://example.com/freesongcover.png"
 }
 
 Response:
@@ -41,7 +43,7 @@ Response:
     "errors": []
   },
   "data": {
-    "id": 152
+    "id": 1532
   }
 }
 ```
@@ -49,13 +51,13 @@ Response:
 ```
 Request:
 {
-  "trackId": 152,
-  "urlYtv": "https://www.youtube.com/watch?v=af59U2BRRAU",
-  "artists": ["Rammstein"],
+  "trackId": 1532,
+  "url": "https://example.com/freesong",
+  "artists": ["Scott Buckley"],
   "featuring": [],
-  "title": "Rosenrot",
-  "album": "Rosenrot",
-  "urlCover": "https://live.staticflickr.com/33/64120185_9c754331e3.jpg"
+  "title": "Chasing Nightlight",
+  "album": "",
+  "urlCover": "https://example.com/freesongcover.png"
 }
 
 Response:
@@ -65,7 +67,7 @@ Response:
     "errors": []
   },
   "data": {
-    "id": 152
+    "id": 1532
   }
 }
 ```
@@ -83,13 +85,13 @@ Response:
     },
     "tracks": [
       {
-        "trackId": 152,
-        "urlYtv": "https://www.youtube.com/watch?v=af59U2BRRAU",
-        "artists": ["Rammstein"],
+        "trackId": 1532,
+        "url": "https://example.com/freesong",
+        "artists": ["Scott Buckley"],
         "featuring": [],
-        "title": "Rosenrot",
-        "album": "Rosenrot",
-        "urlCover": "https://live.staticflickr.com/33/64120185_9c754331e3.jpg"
+        "title": "Chasing Daylight",
+        "album": "",
+        "urlCover": "https://example.com/freesongcover.png"
       }
     ]
   }

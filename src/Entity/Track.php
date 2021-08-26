@@ -21,7 +21,7 @@ class Track
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $ytv;
+    private $url;
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -58,14 +58,14 @@ class Track
         return $this->id;
     }
 
-    public function getYtv(): ?string
+    public function getUrl(): ?string
     {
-        return $this->ytv;
+        return $this->url;
     }
 
-    public function setYtv(string $ytv): self
+    public function setUrl(string $url): self
     {
-        $this->ytv = $ytv;
+        $this->url = $url;
 
         return $this;
     }

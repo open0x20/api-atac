@@ -48,18 +48,18 @@ class InfoController extends AbstractController
     }
 
     /**
-     * @Route("/info/check_ytv", name="info_check_ytv", methods={"GET"})
+     * @Route("/info/check_url", name="info_check_url", methods={"GET"})
      * @param Request $request
      * @return \App\Dto\Response\Response
      */
-    public function getYtvInfo(Request $request)
+    public function getUrlInfo(Request $request)
     {
         // Fetch query parameters
         $url = $request->query->has('url') ? $request->query->get('url') : null;
         $url = urldecode($url);
 
         // Processing
-        $data = InfoModel::getYtvInfo($url);
+        $data = InfoModel::getUrlInfo($url);
 
         // Response
         return DtoHelper::createResponseDto(Response::HTTP_OK, $data, []);

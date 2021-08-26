@@ -37,7 +37,7 @@ class WorkerCommand extends Command
     protected function configure()
     {
         $this
-            ->setDescription('Converts all ytv queued for processing.')
+            ->setDescription('Converts all videos queued for processing.')
         ;
     }
 
@@ -73,7 +73,7 @@ class WorkerCommand extends Command
         foreach ($tracks as $track) {
             echo PHP_EOL;
             echo '[#] Processing track ' . $track->getid() . ' "' . $track->getTitle() . '" by '. $track->getArtists()[0]->getArtist()->getName() . ' at ' . date('Y-m-d H:i:s') . PHP_EOL;
-            $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getYtv());
+            $filepath = ConfigHelper::get('data_dir') . '/' . FileManager::computeResultingFilename($track->getUrl());
 
             FileManager::downloadCoverFile($track, $verbose);
             FileManager::downloadVideoFile($track, $verbose);

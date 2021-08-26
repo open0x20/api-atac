@@ -6,8 +6,8 @@
 parameters:
     app_root: '%kernel.project_dir%'
 
-    data_dir: '/var/www/deployments/data/api-atac/tmp'
-    store_dir: '/var/www/deployments/data/api-atac/songs'
+    data_dir: '%kernel.project_dir%/../data/api-atac/tmp'
+    store_dir: '%kernel.project_dir%/../data/api-atac/songs'
 
     ffmpeg_path: '/usr/bin/ffmpeg'
     youtubedl_path: '/usr/local/bin/youtube-dl'

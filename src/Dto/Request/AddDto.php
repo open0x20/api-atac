@@ -17,7 +17,7 @@ class AddDto
      *
      * @var string
      */
-    public $urlYtv;
+    public $url;
 
     /**
      * @Assert\NotBlank()

@@ -27,13 +27,13 @@ class TrackModel
         $trackArtistRepo = Database::getInstance()->getRepository(TrackArtist::class);
 
         // check for duplicate track entries
-        if (count($trackRepo->findBy(['ytv' => $addDto->urlYtv])) > 0) {
-            throw new TrackException('A track with that urlYtv already exists.', 400);
+        if (count($trackRepo->findBy(['url' => $addDto->url])) > 0) {
+            throw new TrackException('A track with that url already exists.', 400);
         }
 
         // save track into database
         $track = new Track();
-        $track->setYtv($addDto->urlYtv);
+        $track->setUrl($addDto->url);
         $track->setTitle($addDto->title);
         $track->setCoverUrl($addDto->urlCover);
         $track->setAlbum($addDto->album);
@@ -69,11 +69,11 @@ class TrackModel
             throw new TrackException('No track found for given id.', 400);
         }
 
-        // remove from storage (needed in case the ytv url changes)
+        // remove from storage (needed in case the url changes)
         FileManager::removeFromStorage($track);
 
         // update the database entity
-        $track->setYtv($updateDto->urlYtv);
+        $track->setUrl($updateDto->url);
         $track->setTitle($updateDto->title);
         $track->setCoverUrl($updateDto->urlCover);
         $track->setAlbum($updateDto->album);
@@ -118,10 +118,10 @@ class TrackModel
         }
         $removedTrackId = $track->getId();
 
-        // remove ytv from local storage
+        // remove track from local storage
         FileManager::removeFromStorage($track);
 
-        // remove ytv from database
+        // remove track from database
         $trackArtistRepo->removeTrackArtists($track->getArtists());
         $trackRepo->removeTrack($track);
 
